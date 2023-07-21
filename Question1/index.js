@@ -14,14 +14,26 @@ let token;
 
 async function getToken() {
     try {
-      const response = await axios.post('http://20.244.56.144/train/auth', {
+      // First, register the company and get the clientID and clientSecret
+      const registerResponse = await axios.post('http://20.244.56.144/train/register', {
         companyName,
         ownerName,
         rollNo,
         ownerEmail,
         accessCode,
       });
-      token = response.data.access_token;
+      const { clientID, clientSecret } = registerResponse.data;
+  
+      // Then, use the clientID and clientSecret to obtain the authorization token
+      const authResponse = await axios.post('http://20.244.56.144/train/auth', {
+        companyName,
+        clientID,
+        clientSecret,
+        ownerName,
+        ownerEmail,
+        rollNo,
+      });
+      token = authResponse.data.access_token;
     } catch (error) {
       console.error(error);
     }
