@@ -6,7 +6,7 @@ const port = 3002;
 
 const companyName = 'KIIT';
 const ownerName = 'Nitya Singh';
-const rollNo = '1';
+const rollNo = '2005777';
 const ownerEmail = '2005317@kiit.ac.in';
 const accessCode = 'oJnNPG';
 
@@ -14,7 +14,6 @@ let token;
 
 async function getToken() {
     try {
-      // First, register the company and get the clientID and clientSecret
       const registerResponse = await axios.post('http://20.244.56.144/train/register', {
         companyName,
         ownerName,
@@ -23,8 +22,6 @@ async function getToken() {
         accessCode,
       });
       const { clientID, clientSecret } = registerResponse.data;
-  
-      // Then, use the clientID and clientSecret to obtain the authorization token
       const authResponse = await axios.post('http://20.244.56.144/train/auth', {
         companyName,
         clientID,
@@ -51,10 +48,10 @@ async function getToken() {
     }
   }
   function filterAndSortTrains(trains) {
+    trains = Object.values(trains);
     const currentTime = new Date();
     const twelveHoursLater = new Date(currentTime.getTime() + 12 * 60 * 60 * 1000);
-    return trains
-      .filter((train) => {
+    return trains.filter((train) => {
         const departureTime = new Date(
           currentTime.getFullYear(),
           currentTime.getMonth(),
@@ -109,7 +106,13 @@ async function getToken() {
 app.get('/', async (req, res) => {
   if (!token) await getToken();
   const trains = await getAllTrains();
-  res.json(filterAndSortTrains(trains));
+
+  if (!Array.isArray(trains)) {
+    return res.status(500).json({ error: 'Trains data is not in the correct format.',type: typeof trains });
+  }
+
+  const filteredAndSortedTrains = filterAndSortTrains(trains);
+  res.json(filteredAndSortedTrains);
 });
 
 app.get('/:trainNumber', async (req, res) => {
