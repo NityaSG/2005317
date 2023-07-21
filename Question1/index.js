@@ -93,3 +93,15 @@ async function getToken() {
     }
   }
   
+app.get('/', async (req, res) => {
+  if (!token) await getToken();
+  const trains = await getAllTrains();
+  res.json(filterAndSortTrains(trains));
+});
+
+app.get('/:trainNumber', async (req, res) => {
+  if (!token) await getToken();
+  const trainNumber = req.params.trainNumber;
+  const trainDetails = await getTrainDetails(trainNumber);
+  res.json(trainDetails);
+});
