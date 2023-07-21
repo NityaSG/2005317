@@ -1,14 +1,14 @@
 const express = require('express');
 const axios = require('axios');
 const app = express();
-const port = 3000;
+const port = 3002;
 
 
 const companyName = 'KIIT';
 const ownerName = 'Nitya Singh';
 const rollNo = '1';
 const ownerEmail = '2005317@kiit.ac.in';
-const accessCode = 'FKDLjg';
+const accessCode = 'oJnNPG';
 
 let token;
 
@@ -32,6 +32,7 @@ async function getToken() {
       const response = await axios.get('http://20.244.56.144/train/trains', {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(response.data)
       return response.data;
     } catch (error) {
       console.error(error);
@@ -105,3 +106,7 @@ app.get('/:trainNumber', async (req, res) => {
   const trainDetails = await getTrainDetails(trainNumber);
   res.json(trainDetails);
 });
+
+app.listen(port, () => {
+    console.log(`API listening at http://localhost:${port}`);
+  });
