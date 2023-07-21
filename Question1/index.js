@@ -82,4 +82,14 @@ async function getToken() {
         return bDepartureTime - aDepartureTime;
       });
   }
+  async function getTrainDetails(trainNumber) {
+    try {
+      const response = await axios.get(`http://20.244.56.144/train/trains/${trainNumber}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
   
